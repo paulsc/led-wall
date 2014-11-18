@@ -10,7 +10,7 @@ var SERIAL_PORT = '/dev/tty.usbserial-A901LRZP'
 var HTTP_PORT = 8000
 var WEBSOCKET_PORT = 9999
 
-var serialPort = new SerialPort(SERIAL_PORT, { baudrate: 9600 })
+var serialPort = new SerialPort(SERIAL_PORT, { baudrate: 115200 })
 
 var logger = new (winston.Logger)({
     transports: [
@@ -53,6 +53,15 @@ function takeFirstEmptySlot(array, itemToAdd) {
     return itemId
 }
 
+function scaleCoord(y) {
+    var lower_bound = 100
+    var upper_bound = 1300
+    if (y < lower_bound) return 7
+    if (y >= upper_bound) return 0
+    var range = upper_bound - lower_bound
+    return 7 - Math.floor((y - lower_bound) / range * 7)
+}
+
 var connections = []
 
 var server = ws.createServer(function(conn) {
@@ -61,7 +70,13 @@ var server = ws.createServer(function(conn) {
 
     logger.info("new connection, assigned id: " + connectionId)
     conn.on("text", function (str) {
-        logger.debug("connection #" + connectionId + " received: " + str)
+        var scaled = scaleCoord(parseInt(str))
+        logger.debug("connection #" + connectionId + " received: " + str + " scaled: " + scaled)
+
+        serialPort.write("X" + scaled, function(err, results) {
+            console.log('err ' + err);
+            console.log('results ' + results);
+        });
     })
     conn.on("close", function(code, reason) {
         logger.info('connection #' + connectionId +' closed')

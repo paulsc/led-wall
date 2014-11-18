@@ -7,7 +7,7 @@ int incomingByte = 0;   // for incoming serial data
 void setup()
 {
   Rb.init();
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Hello Computer");  
 }
 
@@ -19,20 +19,12 @@ void loop()
       incomingByte = Serial.read();
 
       // say what you got:
-      Serial.print("I received: ");
-      Serial.println(incomingByte, DEC);
+      //Serial.print("I received: ");
+      //Serial.println(incomingByte, DEC);
       
-      if (incomingByte == 85) { // U
-        x = (x + 1) % 8;
-      }
-      else if (incomingByte == 76) { // L
-        y = (y - 1) % 8;
-      }
-      else if (incomingByte == 82) { // R
-        y = (y + 1) % 8;
-      }
-      else if (incomingByte == 68) { // D
-        x = (x - 1) % 8;
+      if (incomingByte == 89 && Serial.available() > 0) { 
+        incomingByte = Serial.read();
+        x = incomingByte - 48;
       }
     } 
   

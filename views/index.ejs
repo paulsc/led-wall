@@ -1,5 +1,8 @@
 <html>
 <head>
+
+<meta name="viewport" content="width=max-device-width, user-scalable=no">
+
 <title> Tracker </title>
 
 <style>
@@ -155,14 +158,32 @@ body {
         document.body.style.backgroundColor = "rgb(" + bg.r + ", " + bg.g + ", " + bg.b + ")";
 
         document.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+        })
 
-            document.getElementById("log").innerHTML += "touched.<br/>";
+        var old_touch_y = 0;
+        var touch_y = 0;
 
-            /*
+        setInterval(function() {
+
             if (socket && socket.readyState == 1) {
-                socket.send(recordingBeta);
+                if (old_touch_y != touch_y) {
+                    socket.send(touch_y);
+                    old_touch_y = touch_y;
+                }
             }
 
+        }, 100);
+
+        document.addEventListener('touchmove', function(e) {
+
+            var touch = event.touches[0];
+                
+            touch_y = touch.pageY;
+            document.getElementById("log").innerHTML = touch.pageY;
+
+
+            /*
             document.getElementById("log-c").innerHTML = "SENT";
             window.removeEventListener("deviceorientation", deviceOrientationHandler, true);
             return;
