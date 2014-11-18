@@ -54,12 +54,12 @@ function takeFirstEmptySlot(array, itemToAdd) {
 }
 
 function scaleCoord(y) {
-    var lower_bound = 100
-    var upper_bound = 1300
-    if (y < lower_bound) return 7
-    if (y >= upper_bound) return 0
+    var lower_bound = 300
+    var upper_bound = 900
+    if (y < lower_bound) return 6
+    if (y >= upper_bound) return 1
     var range = upper_bound - lower_bound
-    return 7 - Math.floor((y - lower_bound) / range * 7)
+    return (5 - Math.floor((y - lower_bound) / range * 5)) + 1
 }
 
 var connections = []
@@ -73,9 +73,9 @@ var server = ws.createServer(function(conn) {
         var scaled = scaleCoord(parseInt(str))
         logger.debug("connection #" + connectionId + " received: " + str + " scaled: " + scaled)
 
-        serialPort.write("X" + scaled, function(err, results) {
-            console.log('err ' + err);
-            console.log('results ' + results);
+        serialPort.write("Y" + scaled, function(err, results) {
+            if (err) logger.error('err ' + err);
+            //logger.info('results ' + results);
         });
     })
     conn.on("close", function(code, reason) {

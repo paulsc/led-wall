@@ -1,7 +1,7 @@
 #include <Rainbowduino.h>
 
 unsigned char x = 4;
-unsigned char y = 4;
+unsigned char y = 0;
 int incomingByte = 0;   // for incoming serial data
 
 void setup()
@@ -29,6 +29,8 @@ void loop()
     } 
   
     Rb.setPixelXY(x,y,0xFF,0xFF,0xFF); //uses R, G and B bytes
+    Rb.setPixelXY(x-1,y,0xFF,0xFF,0xFF); //uses R, G and B bytes
+    Rb.setPixelXY(x+1,y,0xFF,0xFF,0xFF); //uses R, G and B bytes
 
     delay(100);
     Rb.blankDisplay();
