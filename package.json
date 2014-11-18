@@ -1,0 +1,20 @@
+{
+    "name": "pixel-pong",
+    "version": "0.0.1",
+    "description": "pixel-pong",
+    "keywords": [],
+    "repository": "https://github.com/paulsc/led-wall.git",
+    "homepage": "",
+    "author": "",
+    "dependencies": {
+        "node-osc": ">=0.2.1",
+        "nodejs-websocket": ">=1.0.0",
+        "winston": ">=0.8.0",
+        "express": ">=4.9.5",
+        "ejs": ">=1.0.0",
+        "underscore": ">=1.7.0",
+        "keypress": ">=0.2.1",
+        "lazy": ">=1.0.11",
+        "serialport": ">=1.4.6"
+   }
+}
