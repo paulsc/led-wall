@@ -1,0 +1,13 @@
+SCRIPT:
+
+- iphone 1 loads local webserver, gets assigned random color in background
+- left side of screen lights up with said color and number "1" in inverse
+- iphone 2 loads, gets color
+- right side lights up with said color and number "2" in inverse
+
+game starts
+
+- touch input on the phone is used to move paddle up or down
+
+
+

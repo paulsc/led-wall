@@ -1,0 +1,196 @@
+<html>
+<head>
+<title> Tracker </title>
+
+<style>
+body { 
+    font-family: "Arial"; 
+    font-size: 100px;
+    font-weight: bold;
+}
+
+.blink {
+  -moz-animation-duration: 500ms;
+  -moz-animation-name: blink;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-direction: alternate;
+  
+  -webkit-animation-duration: 500ms;
+  -webkit-animation-name: blink;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  
+  animation-duration: 500ms;
+  animation-name: blink;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@-moz-keyframes blink {
+  0% {
+    opacity: 0;
+    color: pink;
+  }
+
+  49.99% {
+    opacity: 0;
+    color: green;
+  }
+  50% {
+    opacity: 1;
+    color: blue;
+  }
+
+  99.99% {
+    opacity: 1;
+    color: orange;
+  }
+  100% {
+    opacity: 0;
+    color: pink;
+  }
+}
+
+@-webkit-keyframes blink {
+  0% {
+    opacity: 0;
+    color: pink;
+  }
+
+  49.99% {
+    opacity: 0;
+    color: green;
+  }
+  50% {
+    opacity: 1;
+    color: blue;
+  }
+
+  99.99% {
+    opacity: 1;
+    color: orange;
+  }
+  100% {
+    opacity: 0;
+    color: pink;
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+    color: pink;
+  }
+
+  49.99% {
+    opacity: 0;
+    color: green;
+  }
+  50% {
+    opacity: 1;
+    color: blue;
+  }
+
+  99.99% {
+    opacity: 1;
+    color: orange;
+  }
+  100% {
+    opacity: 0;
+    color: pink;
+  }
+}
+
+</style>
+
+<script type="text/javascript" src="/underscore.js"></script>
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js"></script>
+-->
+
+<script type="text/javascript">
+
+    var socket;
+    var color = Math.random();
+    var color255 = Math.round(color * 255);
+
+    function HSVtoRGB(h, s, v) {
+        var r, g, b, i, f, p, q, t;
+        if (h && s === undefined && v === undefined) {
+            s = h.s, v = h.v, h = h.h;
+        }
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
+        switch (i % 6) {
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+        }
+        return {
+           r: Math.floor(r * 255),
+           g: Math.floor(g * 255),
+           b: Math.floor(b * 255)
+        };
+    }
+
+    function socketOpened() {
+        document.getElementById("log").innerHTML = 'connected.';
+    }
+
+    function socketClosed() {
+        document.getElementById("log").innerHTML = 'disconnected.';  
+    }
+
+    function onload() {
+
+        var bg = HSVtoRGB(color, 1, 1);
+
+        document.body.style.backgroundColor = "rgb(" + bg.r + ", " + bg.g + ", " + bg.b + ")";
+
+        document.addEventListener('touchstart', function(e) {
+
+            document.getElementById("log").innerHTML += "touched.<br/>";
+
+            /*
+            if (socket && socket.readyState == 1) {
+                socket.send(recordingBeta);
+            }
+
+            document.getElementById("log-c").innerHTML = "SENT";
+            window.removeEventListener("deviceorientation", deviceOrientationHandler, true);
+            return;
+
+            if (on) {
+                window.removeEventListener('devicemotion', deviceMotionHandler);
+                on = false;
+            }
+            else {
+                window.addEventListener('devicemotion', deviceMotionHandler);
+                on = true;
+            }
+            */
+        }, false);
+
+        socket = new WebSocket('<%= websocket_url %>');
+        socket.onopen = socketOpened;
+        socket.onclose = socketClosed;
+    }
+
+</script>
+
+</head>
+
+<body onload="onload()">
+
+    <div id="log"></div>
+
+</body>
+</html>
+
