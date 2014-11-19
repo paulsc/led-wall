@@ -72,8 +72,10 @@ var server = ws.createServer(function(conn) {
     conn.on("text", function (str) {
         var scaled = scaleCoord(parseInt(str))
         logger.debug("connection #" + connectionId + " received: " + str + " scaled: " + scaled)
+        var prefix = "A"
+        if (connectionId == 1) prefix = "B"
 
-        serialPort.write("Y" + scaled, function(err, results) {
+        serialPort.write(prefix + scaled, function(err, results) {
             if (err) logger.error('err ' + err);
             //logger.info('results ' + results);
         });
