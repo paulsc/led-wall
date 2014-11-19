@@ -23,8 +23,8 @@ void loop()
       incomingByte = Serial.read();
 
       // say what you got:
-      Serial.print("I received: ");
-      Serial.println(incomingByte, DEC);
+      //Serial.print("I received: ");
+      //Serial.println(incomingByte, DEC);
       
       if (incomingByte == 65 && Serial.available() > 0) { //A
         incomingByte = Serial.read();

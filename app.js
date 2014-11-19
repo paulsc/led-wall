@@ -5,6 +5,7 @@ var SerialPort = require('serialport').SerialPort
 var winston = require('winston')
 var express = require('express')
 var lib = require('./lib')
+var play = require('play')
 
 var SERIAL_PORT = '/dev/tty.usbserial-A901LRZP'
 var HTTP_PORT = 8000
@@ -80,20 +81,23 @@ var server = ws.createServer(function(conn) {
     conn.on("text", function (str) {
         var scaled = scaleCoord(parseInt(str))
         logger.debug("connection #" + connectionId + " received: " + str + " scaled: " + scaled)
-        var prefix = "A"
-        if (connectionId == 1) { 
-            pad_b = yToMap(scaled)
-            prefix = "B"
-        } 
-        else if (connectionId == 0) {
+        var prefix
+        var override = true
+        if (override || connectionId == 0) {
             pad_a = yToMap(scaled)
             prefix = "A"
+            serialPort.write(prefix + scaled, function(err, results) {
+                if (err) logger.error('err ' + err)
+            })
         }
 
-        serialPort.write(prefix + scaled, function(err, results) {
-            if (err) logger.error('err ' + err)
-            //logger.info('results ' + results)
-        })
+        if (override || connectionId == 1) { 
+            pad_b = yToMap(scaled)
+            prefix = "B"
+            serialPort.write(prefix + scaled, function(err, results) {
+                if (err) logger.error('err ' + err)
+            })
+        } 
     })
     conn.on("close", function(code, reason) {
         logger.info('connection #' + connectionId +' closed')
@@ -130,7 +134,7 @@ var ball_coords = [ 2, 1 ]
 var ball_vector = [ 1, 1 ]
 
 var pad_a = 4
-var pad_b = 6
+var pad_b = 4
 
 var FIELD_SIZE = 10 // adding 2 for invisible walls
 var BLOCK_EMPTY = 0
@@ -155,7 +159,6 @@ function initializeMap() {
     _.map(map, function(value, key) { value[0] = BLOCK_PIT_A })
     _.map(map, function(value, key) { value[9] = BLOCK_PIT_B })
 }
-initializeMap()
 
 function putPadsOnMap() {
     map[pad_a - 1][1] = BLOCK_WALL
@@ -166,6 +169,7 @@ function putPadsOnMap() {
     map[pad_b][8] = BLOCK_WALL
     map[pad_b + 1][8] = BLOCK_WALL
 }
+initializeMap()
 putPadsOnMap()
 drawDebugMap()
  
@@ -175,7 +179,7 @@ function startPhysics() {
         if (err) logger.error('err ' + err)
     })
 
-    setInterval(function() { renderScene() }, 1000)
+    setInterval(function() { renderScene() }, 500)
 }
 
 function drawDebugMap() {
@@ -207,6 +211,8 @@ function isWall(block) { return block == BLOCK_WALL }
 //function isWall(block) { return block != BLOCK_EMPTY }
 
 function renderScene() {
+    initializeMap()
+    putPadsOnMap()
 
     ball_coords[0] += ball_vector[0]
     ball_coords[1] += ball_vector[1]
@@ -215,6 +221,8 @@ function renderScene() {
     logger.debug('ball hitting: ' + target_block_type)
 
     if (isWall(target_block_type)) {
+        play.sound('sounds/kick.wav')
+
         var option1 = ball_coords.slice(0)
         option1[0] -= ball_vector[0]
         var block1 = getBlock(option1)
@@ -240,10 +248,12 @@ function renderScene() {
         }
     }
     else if (target_block_type == BLOCK_PIT_B) {
+        play.sound('sounds/fail.mp3')
         logger.info("!!!! LEFT WINS !!!!")
         process.exit()
     }
     else if (target_block_type == BLOCK_PIT_A) {
+        play.sound('sounds/fail.mp3')
         logger.info("!!!! RIGHT WINS !!!!")
         process.exit()
     }
