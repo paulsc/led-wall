@@ -3,8 +3,8 @@
 unsigned char x1 = 4;
 unsigned char x2 = 4;
 
-unsigned char ball_x = 4;
-unsigned char ball_y = 4;
+unsigned char ball_x = 7;
+unsigned char ball_y = 1;
 
 int incomingByte = 0;   // for incoming serial data
 

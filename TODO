@@ -11,3 +11,16 @@ game starts
 
 
 
+
+Collisions:
+
+xxxxxxxx
+  1 2
+
+xxxxxxxx
+      1x
+     2
+
+xxxxxxxx
+     1 x
+      2
